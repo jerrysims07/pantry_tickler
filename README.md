@@ -13,3 +13,10 @@ Features:
 This app will track the rate of consumption for household and attempt to "learn" the expected time to empty based on what is currently in inventory around the house.
 
 There will be no external data used in this app.
+
+User Stories
+============
+* As a homemaker, I want to be able to quickly view what items I may be running low on to ensure that nothing is missed.
+* As a homemaker, I want to be able to add and update items so that staple items, ideal inventory amount, and number of days to empty are more reflective of my personal situation.
+* As a homemaker, I want to be able to search for average rates of consumption of items to better inform my decision making regarding pantry inventory numbers.
+* As a homemaker, I want to be able to print a shopping list to keep my pantry updated until the next anticipated trip to the store.
