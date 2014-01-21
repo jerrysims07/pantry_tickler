@@ -4,7 +4,7 @@ User Stories
 Creating New Records
 --------------------
 * As a homemaker, I want to be able to add items so that staple items, ideal inventory amount, and number of days to empty are more reflective of my personal situation.
-## Acceptance Criteria
+### Acceptance Criteria
 1. User will type a '-a' modifier to get into the add module. 
 2. Two arguments will be required with add module. Those are the item name and the ideal inventory amount
 3. User will receive a message that their data was added successfully and see that data mirrored back to them.
@@ -12,10 +12,10 @@ Creating New Records
 Reading Existing Records
 ------------------------
 * As a homemaker, I want to be able to quickly view what items I may be running low on to ensure that nothing is missed.
-## Acceptance Criteria
-1. User will type "-list" to get a list of all items that at 7 days of inventory or less.
-2. Optionally, the user may add an integer argument to specify the number of days to empty the report should return.
-3. A list will be printed suggesting items that the user's pantry may be running low on.
+### Acceptance Criteria
+1.  User will type "-list" to get a list of all items that at 7 days of inventory or less.
+2.  Optionally, the user may add an integer argument to specify the number of days to empty the report should return.
+3.  A list will be printed suggesting items that the user's pantry may be running low on.
 * As a homemaker, I want to be able to search for average rates of consumption of items to better inform my decision making regarding pantry inventory numbers.
 ## Acceptance Criteria
 1. User will type "-avg" to get a the average rate of consumption for a specific item.
