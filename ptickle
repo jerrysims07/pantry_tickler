@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+require 'sqlite3'
+
+
+require_relative 'lib/environment.rb'
+require_relative 'lib/parse_argv.rb'
+
+
+command = ARGV[0]
+options = ParseArgv.parse
+options[:name] = ARGV[1]
+errors = ParseArgv.validate options
+
+if errors.empty?
+  database = Environment.database_connection(options[:environment])
+  puts "stub -- You totally added an item (NOT REALLY)"
+
+else
+  puts errors unless errors.empty?
+end
