@@ -7,11 +7,14 @@ class ParseArgv
     options = {}
     OptionParser.new do |opts|
       opts.banner = "Usage: ptickle [command] [options]"
-      opts.on("-inv [INV]", "Target inventory amount") do |inv|
+      opts.on("--inv [INV]", "Target inventory amount") do |inv|
         options[:inv] = inv
       end
-      opts.on("-name [NAME]", "Inventory Item Name") do |name|
+      opts.on("--name [NAME]", "Inventory Item Name") do |name|
         options[:name] = name
+      end
+      opts.on("--environment [ENV]", "Active Environment") do |env|
+        options[:environment] = env 
       end
     end.parse!
     options

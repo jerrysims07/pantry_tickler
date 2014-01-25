@@ -8,12 +8,15 @@ require_relative 'lib/parse_argv.rb'
 
 command = ARGV[0]
 options = ParseArgv.parse
-options[:name] = ARGV[1]
 errors = ParseArgv.validate options
 
 if errors.empty?
-  database = Environment.database_connection(options[:environment])
-  puts "stub -- You totally added an item (NOT REALLY)"
+
+  environment = Environment.type options[:environment] || "production"
+  database = Environment.database_connection
+  database.execute("insert into items ('name', 'targetInventory') values ('#{options[:name]}', #{options[:inv]})")
+  puts "Looks like you successfully added something"
+  # database.execute("insert into items ('name', 'targetInventory') values ('Target',                          10)")
 
 else
   puts errors unless errors.empty?
