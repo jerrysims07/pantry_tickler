@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 require 'sqlite3'
+require_relative './lib/helper.rb'
+require_relative './models/staple.rb'
 
 
 require_relative 'lib/environment.rb'
@@ -14,10 +16,14 @@ if errors.empty?
 
   environment = Environment.type options[:environment] || "production"
   database = Environment.database_connection
-  database.execute("insert into items ('name', 'targetInventory') values ('#{options[:name]}', #{options[:inv]})")
-  puts "Looks like you successfully added something"
-  # database.execute("insert into items ('name', 'targetInventory') values ('Target',                          10)")
+
+  case command
+  when "add"
+    Staple.add(options, database)
+  else puts "command not found"
+  end  
 
 else
   puts errors unless errors.empty?
 end
+

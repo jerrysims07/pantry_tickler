@@ -15,7 +15,7 @@ class TestEnteringItems < Minitest::Unit::TestCase
   def test_add_item_will_add_Item_to_database
     actual = `./ptickle add --name Cheerios --inv 10 --environment test`
     expected = <<EOS.chomp
-Looks like you successfully added something
+Stub: You would have added something here.
 EOS
     assert_equal expected, actual.strip
   end
