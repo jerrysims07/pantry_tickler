@@ -27,4 +27,5 @@ end
 
 def create_tables(database_connection)
   database_connection.execute("CREATE TABLE staples (id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50), targetInventory integer)")
+  database_connection.execute("CREATE TABLE purchases (id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(50), daysStocked integer)")
 end
