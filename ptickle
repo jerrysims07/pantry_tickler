@@ -2,15 +2,16 @@
 require 'sqlite3'
 require_relative './lib/helper.rb'
 require_relative './models/staple.rb'
+require_relative './models/purchase.rb'
 
 
 require_relative 'lib/environment.rb'
-require_relative 'lib/parse_argv.rb'
+require_relative 'lib/argument_parser.rb'
 
 
 command = ARGV[0]
-options = ParseArgv.parse
-errors = ParseArgv.validate options
+options = ArgumentParser.parse
+errors = ArgumentParser.validate options
 
 if errors.empty?
 
@@ -19,7 +20,9 @@ if errors.empty?
 
   case command
   when "add"
-    Staple.add(options, database)
+    addStaple(options, database)
+  when "purchase"
+    addPurchase(options, database)
   else puts "command not found"
   end  
 
