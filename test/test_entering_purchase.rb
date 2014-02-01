@@ -1,6 +1,7 @@
 require 'minitest/autorun'
+require_relative 'helper'
 
-class TestEnteringPurchases < Minitest::Unit::TestCase
+class TestEnteringPurchases < HelperTest
 
   def test_no_item_name_on_command_line
     command = `./ptickle purchase`
@@ -15,7 +16,8 @@ class TestEnteringPurchases < Minitest::Unit::TestCase
   def test_add_purchase_will_add_Purchase_to_database
     actual = `./ptickle purchase --name Cheerios --days 10 --environment test`
     expected = <<EOS.chomp
-Stub: You would have added a purchase here.
+You have added the following purchase:
+name: Cheerios, days stocked: 10
 EOS
     assert_equal expected, actual.strip
   end

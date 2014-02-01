@@ -11,7 +11,7 @@ class Purchase
 
   def self.add(options, db)
     db.execute("insert into purchases ('name', 'daysStocked') values ('#{options[:name]}', #{options[:days_stocked]})")
-    puts "Stub: You would have added a purchase here."
+    puts "You have added the following purchase:\nname: #{options[:name]}, days stocked: #{options[:days_stocked]}"
   end
 
   def self.options_are_valid options

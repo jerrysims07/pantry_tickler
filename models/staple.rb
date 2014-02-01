@@ -1,37 +1,64 @@
 require 'optparse'
+require 'date'
 
 class Staple
   
-  attr_accessor(:name, :days_stocked, :date) 
+  attr_accessor(:name, :days_stocked, :date)
+
 
   def initialize (name, days_stocked, date_of_purchase)
     self.name = name
     self.days_stocked = days_stocked
     self.date = date_of_purchase
+    # valid_options => {:set_options= [name, days, date]}
   end
 
+  # def self.valid_options
+  # end
+
   def self.add(options, db)
+    already_exists = db.execute("select name from staples where name = '#{options[:name]}'")
+    return "That item already exists. Use the 'edit' command to change" if already_exists[0]
     db.execute("insert into staples ('name', 'targetInventory') values ('#{options[:name]}', #{options[:inv]})")  
-    puts "Stub: You would have added something here."
+    return "You have added the following:\nname: #{options[:name]}, target inventory: #{options[:inv]} days"
   end
 
   def self.options_are_valid (options)
-    if options.nil?
-      return false
-    else
-      missing_arguments = []
-      unless options[:name] 
-        missing_arguments<< "item name" 
-      end
-      unless options[:inv]
-        missing_arguments<< "target inventory amount"
-      end
+    valid_options = {"add" => {:name => "item name", :inv => "target inventory amount"}, "set" => {:name => "item name", :days_stocked => "days stocked"}, "print" => {:days => "shopping day count"}}
+    return false if options.nil?
+    missing_arguments = []
+    valid_options[options[:command]].each_pair do |opt, err|
+      unless options[opt] 
+        missing_arguments << err 
+        end       
     end
     unless missing_arguments.empty? 
-      puts "You must include "+missing_arguments.to_s+" when adding items."
+      puts "You must include "+missing_arguments.to_s+" with the #{options[:command]} command."
       return false
     else return true
     end
+  end
+
+  def self.set(options, db)
+    results = search(options, db)
+    if results.empty? 
+      puts "No results were returned." 
+      return
+    else
+      #update the database here
+      db.execute("UPDATE staples SET nextPurchaseDate=date('now','+#{options[:days_stocked]} days') WHERE name = \'#{options[:name]}\'")
+      new_row = db.execute("select name, nextPurchaseDate from staples where name = '#{options[:name]}'")
+      puts "#{new_row[0][0]}  is now scheduled to be purchased on #{new_row[0][1]}."
+    end
+  end
+
+  def self.print(row)
+    puts row.to_s
+  end
+
+  def self.search(options,db)
+    results = db.execute("select name, nextPurchaseDate from staples where name like '%#{options[:name]}%'")
+    
   end
 
 end

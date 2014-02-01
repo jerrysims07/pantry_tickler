@@ -11,7 +11,8 @@ require_relative 'lib/argument_parser.rb'
 
 command = ARGV[0]
 options = ArgumentParser.parse
-errors = ArgumentParser.validate options
+options[:command] = command
+errors = ArgumentParser.validate options unless command == "print"
 
 if errors.empty?
 
@@ -20,9 +21,13 @@ if errors.empty?
 
   case command
   when "add"
-    addStaple(options, database)
+    add_staple(options, database)
   when "purchase"
-    addPurchase(options, database)
+    add_purchase(options, database)
+  when "set"
+    set_inventory(options, database)
+  when "print"
+    print_grocery_list(options, database)
   else puts "command not found"
   end  
 
