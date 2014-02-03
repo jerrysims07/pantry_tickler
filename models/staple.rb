@@ -19,13 +19,12 @@ class Staple
   def self.add(options, db)
     already_exists = db.execute("select name from staples where name = '#{options[:name]}'")
     return "That item already exists. Use the 'edit' command to change" if already_exists[0]
-    db.execute("insert into staples ('name', 'targetInventory', 'aisle') values ('#{options[:name]}', #{options[:inv]}, #{options[:aisle]})")  
-    return "You have added the following:\nname: #{options[:name]}, target inventory: #{options[:inv]} days, aisle: #{options[:aisle]}"
+    db.execute("insert into staples ('name','aisle') values ('#{options[:name]}', #{options[:aisle]})")  
+    return "You have added the following:\nname: #{options[:name]}, aisle: #{options[:aisle]}"
   end
 
   def self.options_are_valid (options)
     valid_options = { "add" => {:name => "item name", 
-                                :inv => "target inventory amount",
                                 :aisle => "aisle"}, 
                       "set" => {:name => "item name", 
                                 :days_stocked => "days stocked"}, 
@@ -68,12 +67,12 @@ class Staple
   def self.print_grocery_list (options, database)
     target_date = get_target_date(options[:shopping_days].to_i)
     results = database.execute("select name, aisle from staples where nextPurchaseDate < \'#{target_date}\' order by aisle ASC")
-    printf("%20s%10s\n","Item Name","Aisle")
-    printf("%20s%10s\n","---------","-----")
+    printf("%22s%10s\n","Item Name","Aisle")
+    printf("%22s%10s\n","---------","-----")
     puts "No items matched your query" if results.empty?
     results.map do |result| 
       # puts "#{result[0]}      #{result[1]}" 
-      printf("%20s%8s\n", result[0],result[1]) 
+      printf("%22s%8s\n", result[0],result[1]) 
     end 
   end
 
