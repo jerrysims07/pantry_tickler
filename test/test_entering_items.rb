@@ -54,4 +54,16 @@ EOS
 
   end
 
+  def test_import_new_purchases
+    results = `./ptickle import --filename "../data/test_purchases.csv"`.chomp
+    expected = "File imported successfully"
+    assert_equal(expected, results)
+  end
+
+  def test_entering_new_inventory
+    results = `./ptickle inventory --filename "../data/test_inventory.csv"`.chomp
+    expected = "File imported successfully"
+    assert_equal(expected, results)  
+  end
+
 end

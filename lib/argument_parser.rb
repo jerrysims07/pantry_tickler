@@ -22,6 +22,9 @@ class ArgumentParser
       opts.on("--aisle [aisle]", "Aisle") do |aisle|
         options[:aisle] = aisle
       end
+      opts.on("--filename [filename]", "file to be imported") do |filename|
+        options[:filename] = filename
+      end
     end.parse!
     options
   end

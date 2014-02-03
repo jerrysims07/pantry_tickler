@@ -41,3 +41,15 @@ def delete_item (options, database)
     Staple.delete(options, database)
   end 
 end
+
+def update_inventory(options, database)
+  if(Staple.options_are_valid options)
+    Staple.inventory(options, database)
+  end 
+end
+
+def import_purchases(options, database)
+  if(Staple.options_are_valid options)
+    Staple.import(options, database)
+  end 
+end

@@ -13,7 +13,9 @@ command = ARGV[0]
 options = ArgumentParser.parse
 options[:command] = command
 errors = []
-errors = ArgumentParser.validate options unless command == "print"
+errors = ArgumentParser.validate options unless ( command == "print" ||
+                                                  command == "import" ||
+                                                  command == "inventory")
 
 if errors.empty?
 
@@ -31,6 +33,10 @@ if errors.empty?
     print_grocery_list(options, database)
   when "delete"
     delete_item(options, database)
+  when "inventory"
+    update_inventory(options, database)
+  when "import"
+    import_purchases(options, database)
   else puts "command not found"
   end  
 

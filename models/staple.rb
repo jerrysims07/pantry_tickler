@@ -1,5 +1,6 @@
 require 'optparse'
 require 'date'
+require 'csv'
 
 class Staple
   
@@ -29,7 +30,9 @@ class Staple
                       "set" => {:name => "item name", 
                                 :days_stocked => "days stocked"}, 
                       "print" => {:shopping_days => "shopping day count"},
-                      "delete" => {:name => "item name"}}
+                      "delete" => {:name => "item name"},
+                      "import" => {:filename => "purchase file to be imported"},
+                      "inventory" => {:filename => "inventory file"}} 
     return false if options.nil?
     missing_arguments = []
     valid_options[options[:command]].each_pair do |opt, err|
@@ -90,4 +93,20 @@ class Staple
       puts "You have deleted \'#{options[:name]}\' from the database."
     end
   end
+
+  def self.import(options, db)
+    CSV.foreach("./data/test_purchases.csv") do |row|
+      `./ptickle purchase --name \"#{row[0]}\" --days #{row[2]} --environment #{options[:environment]}`
+    end
+    puts "File imported successfully"
+  end
+
+  def self.inventory(options, db)
+    CSV.foreach("./data/test_inventory.csv") do |row|
+      `./ptickle set --name \"#{row[0]}\" --days #{row[2]} --environment #{options[:environment]}`
+    end
+    puts "File imported successfully"
+
+  end
+
 end
