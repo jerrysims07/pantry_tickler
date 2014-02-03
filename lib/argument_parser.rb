@@ -19,6 +19,12 @@ class ArgumentParser
       opts.on("--days [days]", "Days stocked of item") do |days|
         options[:days_stocked] = days
       end
+      opts.on("--shopping_days [days]", "Number of shopping days") do |days|
+        options[:shopping_days] = days
+      end
+      opts.on("--aisle [aisle]", "Aisle") do |aisle|
+        options[:aisle] = aisle
+      end
     end.parse!
     options
   end

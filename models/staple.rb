@@ -19,18 +19,24 @@ class Staple
   def self.add(options, db)
     already_exists = db.execute("select name from staples where name = '#{options[:name]}'")
     return "That item already exists. Use the 'edit' command to change" if already_exists[0]
-    db.execute("insert into staples ('name', 'targetInventory') values ('#{options[:name]}', #{options[:inv]})")  
-    return "You have added the following:\nname: #{options[:name]}, target inventory: #{options[:inv]} days"
+    db.execute("insert into staples ('name', 'targetInventory', 'aisle') values ('#{options[:name]}', #{options[:inv]}, #{options[:aisle]})")  
+    return "You have added the following:\nname: #{options[:name]}, target inventory: #{options[:inv]} days, aisle: #{options[:aisle]}"
   end
 
   def self.options_are_valid (options)
-    valid_options = {"add" => {:name => "item name", :inv => "target inventory amount"}, "set" => {:name => "item name", :days_stocked => "days stocked"}, "print" => {:days => "shopping day count"}}
+    valid_options = { "add" => {:name => "item name", 
+                                :inv => "target inventory amount",
+                                :aisle => "aisle"}, 
+                      "set" => {:name => "item name", 
+                                :days_stocked => "days stocked"}, 
+                      "print" => {:shopping_days => "shopping day count"},
+                      "delete" => {:name => "item name"}}
     return false if options.nil?
     missing_arguments = []
     valid_options[options[:command]].each_pair do |opt, err|
       unless options[opt] 
         missing_arguments << err 
-        end       
+      end       
     end
     unless missing_arguments.empty? 
       puts "You must include "+missing_arguments.to_s+" with the #{options[:command]} command."
@@ -45,7 +51,6 @@ class Staple
       puts "No results were returned." 
       return
     else
-      #update the database here
       db.execute("UPDATE staples SET nextPurchaseDate=date('now','+#{options[:days_stocked]} days') WHERE name = \'#{options[:name]}\'")
       new_row = db.execute("select name, nextPurchaseDate from staples where name = '#{options[:name]}'")
       puts "#{new_row[0][0]}  is now scheduled to be purchased on #{new_row[0][1]}."
@@ -58,7 +63,32 @@ class Staple
 
   def self.search(options,db)
     results = db.execute("select name, nextPurchaseDate from staples where name like '%#{options[:name]}%'")
-    
   end
 
+  def self.print_grocery_list (options, database)
+    target_date = get_target_date(options[:shopping_days].to_i)
+    results = database.execute("select name, aisle from staples where nextPurchaseDate < \'#{target_date}\' order by aisle ASC")
+    printf("%20s%10s\n","Item Name","Aisle")
+    printf("%20s%10s\n","---------","-----")
+    puts "No items matched your query" if results.empty?
+    results.map do |result| 
+      # puts "#{result[0]}      #{result[1]}" 
+      printf("%20s%8s\n", result[0],result[1]) 
+    end 
+  end
+
+  def self.get_target_date (x)
+    return (Time.now + x * (24*60*60)).strftime("%Y-%m-%d")
+  end
+
+  def self.delete (options, db)
+    results = search(options, db)
+    if results.empty? 
+      puts "That item was not found" 
+      return
+    else
+      db.execute("delete from staples WHERE name = \'#{options[:name]}\'")
+      puts "You have deleted \'#{options[:name]}\' from the database."
+    end
+  end
 end

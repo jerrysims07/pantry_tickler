@@ -12,6 +12,7 @@ require_relative 'lib/argument_parser.rb'
 command = ARGV[0]
 options = ArgumentParser.parse
 options[:command] = command
+errors = []
 errors = ArgumentParser.validate options unless command == "print"
 
 if errors.empty?
@@ -28,6 +29,8 @@ if errors.empty?
     set_inventory(options, database)
   when "print"
     print_grocery_list(options, database)
+  when "delete"
+    delete_item(options, database)
   else puts "command not found"
   end  
 

@@ -32,6 +32,12 @@ end
 
 def print_grocery_list (options, database)
   if Staple.options_are_valid options
-    Staple.print_grocery_list
+    Staple.print_grocery_list(options, database)
   end
+end
+
+def delete_item (options, database)
+  if(Staple.options_are_valid options)
+    Staple.delete(options, database)
+  end 
 end
