@@ -14,10 +14,20 @@ class TestEnteringPurchases < HelperTest
   end
   
   def test_add_purchase_will_add_Purchase_to_database
+    `./ptickle add --name Cheerios --aisle 5 --environment test`
     actual = `./ptickle purchase --name Cheerios --days 10 --environment test`
     expected = <<EOS.chomp
-You have added the following purchase:
-name: Cheerios, days stocked: 10
+Cheerios is now scheduled to be purchased on 2014-02-13.
+EOS
+    assert_equal expected, actual.strip
+  end
+
+  def test_add_purchase_will_add_Purchase_to_database_existing_date
+    `./ptickle add --name Cheerios --aisle 5 --environment test`
+    `./ptickle set --name Cheerios --days 4 --environment test`
+    actual = `./ptickle purchase --name Cheerios --days 10 --environment test`
+    expected = <<EOS.chomp
+Cheerios is now scheduled to be purchased on 2014-02-18.
 EOS
     assert_equal expected, actual.strip
   end

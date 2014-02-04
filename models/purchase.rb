@@ -1,3 +1,4 @@
+require 'date'
 
 class Purchase
   
@@ -10,8 +11,20 @@ class Purchase
   end
 
   def self.add(options, db)
-    db.execute("insert into purchases ('name', 'daysStocked') values ('#{options[:name]}', #{options[:days_stocked]})")
-    puts "You have added the following purchase:\nname: #{options[:name]}, days stocked: #{options[:days_stocked]}"
+    results = Staple.search(options, db)
+    if results.empty? 
+      puts "No results were returned." 
+      return
+    else
+      return_row = db.execute("select * from staples where name = \'#{options[:name]}\'")
+      if return_row[0][3].nil?
+        new_date = (Time.now + options[:days_stocked].to_i*(24*60*60)).strftime("%Y-%m-%d")
+      else
+        new_date = Date.strptime(return_row[0][3],"%Y-%m-%d") + options[:days_stocked].to_i
+      end
+      db.execute("UPDATE staples SET nextPurchaseDate=#{new_date} where name = \'#{options[:name]}\'")
+      puts "#{options[:name]} is now scheduled to be purchased on #{new_date}."  
+    end
   end
 
   def self.options_are_valid options

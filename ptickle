@@ -18,29 +18,10 @@ errors = ArgumentParser.validate options unless ( command == "print" ||
                                                   command == "inventory")
 
 if errors.empty?
-
   environment = Environment.type options[:environment] || "production"
   database = Environment.database_connection
-
-  case command
-  when "add"
-    add_staple(options, database)
-  when "purchase"
-    add_purchase(options, database)
-  when "set"
-    set_inventory(options, database)
-  when "print"
-    print_grocery_list(options, database)
-  when "delete"
-    delete_item(options, database)
-  when "inventory"
-    update_inventory(options, database)
-  when "import"
-    import_purchases(options, database)
-  else puts "command not found"
-  end  
-
+  execute_the_command(options, database)
 else
-  puts errors unless errors.empty?
+  puts errors #unless errors.empty?
 end
 

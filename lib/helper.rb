@@ -53,3 +53,23 @@ def import_purchases(options, database)
     Staple.import(options, database)
   end 
 end
+
+def execute_the_command(options, database)
+  case options[:command]
+  when "add"
+    add_staple(options, database)
+  when "purchase"
+    add_purchase(options, database)
+  when "set"
+    set_inventory(options, database)
+  when "print"
+    print_grocery_list(options, database)
+  when "delete"
+    delete_item(options, database)
+  when "inventory"
+    update_inventory(options, database)
+  when "import"
+    import_purchases(options, database)
+  else puts "command not found"
+  end  
+end
