@@ -95,15 +95,15 @@ class Staple
   end
 
   def self.import(options, db)
-    CSV.foreach("./data/test_purchases.csv") do |row|
-      `./ptickle purchase --name \"#{row[0]}\" --days #{row[2]} --environment #{options[:environment]}`
+    CSV.foreach(options[:filename]) do |row|
+      `./ptickle purchase --name \"#{row[0]}\" --days #{row[1]} --environment #{options[:environment]}`
     end
     puts "File imported successfully"
   end
 
   def self.inventory(options, db)
-    CSV.foreach("./data/test_inventory.csv") do |row|
-      `./ptickle set --name \"#{row[0]}\" --days #{row[2]} --environment #{options[:environment]}`
+    CSV.foreach(options[:filename]) do |row|
+      `./ptickle set --name \"#{row[0]}\" --days #{row[1]} --environment #{options[:environment]}`
     end
     puts "File imported successfully"
 

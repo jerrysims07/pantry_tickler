@@ -73,3 +73,4 @@ def execute_the_command(options, database)
   else puts "command not found"
   end  
 end
+
