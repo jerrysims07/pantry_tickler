@@ -17,7 +17,7 @@ class TestEnteringPurchases < HelperTest
     `./ptickle add --name Cheerios --aisle 5 --environment test`
     actual = `./ptickle purchase --name Cheerios --days 10 --environment test`
     expected = <<EOS.chomp
-Cheerios is now scheduled to be purchased on 2014-02-13.
+Cheerios is now scheduled to be purchased on 2014-02-14.
 EOS
     assert_equal expected, actual.strip
   end
