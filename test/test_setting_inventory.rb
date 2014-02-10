@@ -10,6 +10,7 @@ class TestSettingInventory < HelperTest
   end
   
   def test_set_inventory_will_update_database
+   skip
     `./ptickle add --name oatmeal --aisle 5 --environment test`
     actual = `./ptickle set --name oatmeal --days 25 --environment test`
     new_date = (Time.now+ 25*24*60*60).strftime("%Y-%m-%d")

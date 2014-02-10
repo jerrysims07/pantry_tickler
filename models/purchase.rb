@@ -11,18 +11,21 @@ class Purchase
   end
 
   def self.add(options, db)
-    results = Staple.search(options, db)
-    if results.empty? 
+    results = Staple.find_by(name: options[:name])
+    if results.nil? 
       puts "No results were returned." 
       return
     else
-      return_row = db.execute("select * from staples where name = \'#{options[:name]}\'")
-      if return_row[0][3].nil?
+      return_row = Staple.find_by(name: options[:name])
+      # return_row = db.execute("select * from staples where name = \'#{options[:name]}\'")
+      if return_row.nil?
         new_date = (Time.now + options[:days_stocked].to_i*(24*60*60)).strftime("%Y-%m-%d")
       else
-        new_date = Date.strptime(return_row[0][3],"%Y-%m-%d") + options[:days_stocked].to_i
+        new_date = Date.strptime(return_row.next_purchase_date,"%Y-%m-%d") + options[:days_stocked].to_i
       end
-      db.execute("UPDATE staples SET nextPurchaseDate=#{new_date} where name = \'#{options[:name]}\'")
+      staple = Staple.find_by(name: options[:name])
+      staple.update(nextPurchaseDate: new_date)      
+      # db.execute("UPDATE staples SET nextPurchaseDate=#{new_date} where name = \'#{options[:name]}\'")
       puts "#{options[:name]} is now scheduled to be purchased on #{new_date}."  
     end
   end

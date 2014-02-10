@@ -1,26 +1,39 @@
+require 'active_record'
 require 'optparse'
 require 'date'
 require 'csv'
 
-class Staple
+class Staple < ActiveRecord::Base
   
-  attr_accessor(:name, :days_stocked, :date)
+  default_scope { order("name ASC") }
+
+  # attr_accessor(:name, :days_stocked, :date)
 
 
-  def initialize (name, days_stocked, date_of_purchase)
-    self.name = name
-    self.days_stocked = days_stocked
-    self.date = date_of_purchase
-    # valid_options => {:set_options= [name, days, date]}
-  end
+  # def initialize (name, days_stocked, date_of_purchase)
+  #   self.name = name
+  #   self.days_stocked = days_stocked
+  #   self.date = date_of_purchase
+  #   valid_options => {:set_options= [name, days, date]}
+  # end
 
   # def self.valid_options
   # end
 
+  def self.search(search_term = nil)
+    Staple.where("name LIKE ?", "%#{search_term}%").to_a
+  end
+
   def self.add(options, db)
-    already_exists = db.execute("select name from staples where name = '#{options[:name]}'")
-    return "That item already exists. Use the 'edit' command to change" if already_exists[0]
-    db.execute("insert into staples ('name','aisle') values ('#{options[:name]}', #{options[:aisle]})")  
+
+    #look for the item that was entered and return with appropriate message if that item is found. 
+    # already_exists = db.execute("select name from staples where name = '#{options[:name]}'")
+    already_exists = Staple.find_by(name: options[:name])
+    return "That item already exists. Use the 'edit' command to change" if already_exists
+
+    #create the item
+    # db.execute("insert into staples ('name','aisle') values ('#{options[:name]}', #{options[:aisle]})")  
+    new_item = Staple.create(name: options[:name], aisle: options[:aisle])
     return "You have added the following:\nname: #{options[:name]}, aisle: #{options[:aisle]}"
   end
 
@@ -48,14 +61,20 @@ class Staple
   end
 
   def self.set(options, db)
-    results = search(options, db)
+    # results = search(options, db)
+    results = Staple.where(name: options[name])
     if results.empty? 
       puts "No results were returned." 
       return
     else
-      db.execute("UPDATE staples SET nextPurchaseDate=date('now','+#{options[:days_stocked]} days') WHERE name = \'#{options[:name]}\'")
+      #calculate the new date
+
+      # update the item to the new values sent in
+      results.update(name: options[:name], aisle: options[:aisle], next_purchase_date: self.get_target_date(options[:days_stocked]))
+      results.name
+      # db.execute("UPDATE staples SET nextPurchaseDate=date('now','+#{options[:days_stocked]} days') WHERE name = \'#{options[:name]}\'")
       new_row = db.execute("select name, nextPurchaseDate from staples where name = '#{options[:name]}'")
-      puts "#{new_row[0][0]}  is now scheduled to be purchased on #{new_row[0][1]}."
+      puts "#{results.name}  is now scheduled to be purchased on #{results.next_purchase_date}."
     end
   end
 
@@ -64,18 +83,19 @@ class Staple
   end
 
   def self.search(options,db)
-    results = db.execute("select name, nextPurchaseDate from staples where name like '%#{options[:name]}%'")
+    # results = db.execute("select name, nextPurchaseDate from staples where name like '%#{options[:name]}%'")
   end
 
   def self.print_grocery_list (options, database)
     target_date = get_target_date(options[:shopping_days].to_i)
-    results = database.execute("select name, aisle from staples where nextPurchaseDate < \'#{target_date}\' order by aisle ASC")
+    results = Staple.all#("next_purchase_date < #{target_date}")
+    # results = database.execute("select name, aisle from staples where nextPurchaseDate < \'#{target_date}\' order by aisle ASC")
     printf("%22s%10s\n","Item Name","Aisle")
     printf("%22s%10s\n","---------","-----")
     puts "No items matched your query" if results.empty?
     results.map do |result| 
       # puts "#{result[0]}      #{result[1]}" 
-      printf("%22s%8s\n", result[0],result[1]) 
+      printf("%22s%8s\n", result.name,result.aisle) 
     end 
   end
 
@@ -84,12 +104,13 @@ class Staple
   end
 
   def self.delete (options, db)
-    results = search(options, db)
-    if results.empty? 
+    results = Staple.find_by(name: options[:name])
+    if results.nil? 
       puts "That item was not found" 
       return
     else
-      db.execute("delete from staples WHERE name = \'#{options[:name]}\'")
+      results.destroy
+      # db.execute("delete from staples WHERE name = \'#{options[:name]}\'")
       puts "You have deleted \'#{options[:name]}\' from the database."
     end
   end

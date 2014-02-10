@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'active_record'
 require 'sqlite3'
 require_relative './lib/helper.rb'
 require_relative './models/staple.rb'
@@ -18,8 +19,8 @@ errors = ArgumentParser.validate options unless ( command == "print" ||
                                                   command == "inventory")
 
 if errors.empty?
-  environment = Environment.type options[:environment] || "production"
-  database = Environment.database_connection
+  Environment.environment= options[:environment] || "production"
+  database = Environment.connect_to_database
   execute_the_command(options, database)
 else
   puts errors #unless errors.empty?

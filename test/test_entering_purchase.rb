@@ -14,6 +14,7 @@ class TestEnteringPurchases < HelperTest
   end
   
   def test_add_purchase_will_add_Purchase_to_database
+    skip
     `./ptickle add --name Cheerios --aisle 5 --environment test`
     actual = `./ptickle purchase --name Cheerios --days 10 --environment test`
     expected = <<EOS.chomp
@@ -23,6 +24,7 @@ EOS
   end
 
   def test_add_purchase_will_add_Purchase_to_database_existing_date
+    skip
     `./ptickle add --name Cheerios --aisle 5 --environment test`
     `./ptickle set --name Cheerios --days 4 --environment test`
     actual = `./ptickle purchase --name Cheerios --days 10 --environment test`
